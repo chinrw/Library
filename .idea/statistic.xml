@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Statistic">
+    <option name="excludedDirectories">
+      <list>
+        <option value="$PROJECT_DIR$/web/resources/css" />
+        <option value="$PROJECT_DIR$/web/pages/sass" />
+        <option value="$PROJECT_DIR$/web/resources/fonts" />
+        <option value="$PROJECT_DIR$/web/resources/js" />
+      </list>
+    </option>
+  </component>
+</project>

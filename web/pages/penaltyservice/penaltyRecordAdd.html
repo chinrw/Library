@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>添加罚单记录</title>
+    <th:block th:replace="template/usersearch :: head">
+    </th:block>
+    <link type="text/css" rel="stylesheet" href="../../resources/css/style.css" th:href="@{/resources/css/style.css}"
+          media="screen,projection"/>
+</head>
+<body>
+<header th:replace="template/frame :: frame"></header>
+<main>
+    <aside th:replace="template/frame :: aside"></aside>
+    <div th:replace="template/usersearch :: search"></div>
+    <div class="container">
+        <div class="card horizontal z-depth-3">
+            <div class="row">
+                <div class="card-image col s4">
+                    <img src="https://lorempixel.com/100/190/nature/6"
+                         th:src="@{/resources/images/__${penaltyUser.icon}__}">
+                </div>
+                <div class="card-stacked">
+                    <div class="card-content">
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <input disabled id="regDate" type="date" class="datepicker"
+                                       th:placeholder="${#dates.format(penaltyUser.regDate,'yyyy-MM-dd')}">
+                                <label for="regDate" th:text="注册日期">Disabled</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input disabled id="email" type="text" class="validate"
+                                       th:placeholder="${penaltyUser.email}">
+                                <label for="email" th:text="邮箱">Disabled</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input disabled id="tel" type="text" class="validate"
+                                       th:placeholder="${penaltyUser.tel}">
+                                <label for="tel" th:text="电话号码">Disabled</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-action" th:if="${session.currentUser!=null}">
+                        <a th:if="${session.roleList.contains('bookadmin')}"
+                           class="waves-effect wave-light btn right" type="submit"
+                           th:name="penalty" th:href="@{borrowback(user=${penaltyUser.getUserId()})}">查看借阅记录
+                        </a>
+                        <a th:if="${session.roleList.contains('bookadmin')}"
+                           class="waves-effect wave-light btn right" type="submit"
+                           th:name="penalty" th:href="@{penalty(user=${penaltyUser.getUserId()})}">查看罚单记录
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <form class="col s12" th:action="@{/penaltyAdd}" method="post" th:object="${newPenalty}">
+            <div class="card">
+                <div class="card-content">
+                    <div class="input-field col s6">
+                        <input id="penaltyType" type="text" class="validate" required
+                               th:field="*{penaltyType}">
+                        <label for="penaltyType" data-error="wrong">罚单描述</label>
+                    </div>
+
+                    <div class="input-field col s6">
+                        <input id="penaltyAmount" type="number" class="validate" required
+                               th:field="*{penalty}">
+                        <label for="penaltyAmount" data-error="wrong">罚单金额</label>
+                    </div>
+                </div>
+                <div class="card-action" style="padding-bottom: 10%" d>
+                    <button th:value="${borrowRecord.borrowId}" th:name="addPenalty"
+                            class="waves-effect waves-light btn right">
+                        提交罚单
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+</main>
+</body>
+</html>

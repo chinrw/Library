@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>用户借阅记录</title>
+    <th:block th:replace="template/usersearch :: head">
+    </th:block>
+    <link type="text/css" rel="stylesheet" href="../../resources/css/style.css" th:href="@{/resources/css/style.css}"
+          media="screen,projection"/>
+</head>
+<body>
+<header th:replace="template/frame :: frame"></header>
+<main>
+    <aside th:replace="template/frame :: aside"></aside>
+    <div th:replace="template/usersearch :: search"></div>
+    <div class="container">
+        <div class="card horizontal z-depth-3">
+            <div class="row">
+                <div class="card-image col s4">
+                    <img src="https://lorempixel.com/100/190/nature/6"
+                         th:src="@{/resources/images/__${penaltyUser.icon}__}">
+                </div>
+                <div class="card-stacked">
+                    <div class="card-content">
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <input disabled id="regDate" type="date" class="datepicker"
+                                       th:placeholder="${#dates.format(penaltyUser.regDate,'yyyy-MM-dd')}">
+                                <label for="regDate" th:text="注册日期">Disabled</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input disabled id="email" type="text" class="validate"
+                                       th:placeholder="${penaltyUser.email}">
+                                <label for="email" th:text="邮箱">Disabled</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input disabled id="tel" type="text" class="validate"
+                                       th:placeholder="${penaltyUser.tel}">
+                                <label for="tel" th:text="电话号码">Disabled</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input disabled id="penalty" type="number" class="validate"
+                                       th:value="${penaltyService.findAllPenaltyAmountBypenaltyRecords(__${penaltyUser.userId}__)}">
+                                <label for="penalty" th:text="欠款总额">Disabled</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input disabled id="deposit" type="number" class="validate"
+                                       th:value="${reader.getDeposit()}">
+                                <label for="deposit" th:text="账户余额">Disabled</label>
+                            </div>
+
+                            <div class="col s6">
+                                <form action="/penaltyPay" method="post" th:object="${penaltyUser}">
+                                    缴纳金额
+                                    <div class="input-field inline lefts">
+                                        <input id="amount" type="number" step="0.01" class="validate" th:name="pay">
+                                        <label for="amount" data-error="wrong" data-success="right">金额</label>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-action" th:if="${session.currentUser!=null}">
+                        <div>
+                            <a th:if="${session.roleList.contains('bookadmin')}"
+                               class="waves-effect wave-light btn right" type="submit"
+                               th:name="penalty" th:href="@{/borrowback(user=${penaltyUser.getUserId()})}">查看借阅记录
+                            </a>
+                            <a th:if="${session.roleList.contains('bookadmin')}"
+                               class="waves-effect wave-light btn right tooltipped" data-position="top" data-delay="50"
+                               data-tooltip="在借阅记录中添加与对应书册的罚款" type="submit"
+                               th:name="penalty" th:href="@{/borrowback(user=${penaltyUser.getUserId()})}">添加罚单
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <ul class="collapsible z-depth-3" data-collapsible="accordion">
+            <li th:each="penalty, iterstat:${penaltyRecords}" th:object="${penalty}">
+                <div class="collapsible-header">
+                    <img class="resizable avatar" src=""
+                         th:src="@{/resources/images/__${borrowService.searchBookInfoByBorrowID(penalty.getBorrowId()).cover}__}">
+
+                    <th:block
+                            th:text="${borrowService.searchBookInfoByBorrowID(__${penalty.getBorrowId()}__).getTitle()}">
+                    </th:block>
+                    <span th:if="${penalty.status == '1'}"
+                          class="new badge red" data-badge-caption="未缴纳">
+                    </span>
+                </div>
+                <div class="collapsible-body"
+                     th:with="borrowInfo=${borrowService.searchByBorrowID(__${penalty.getBorrowId()}__)}">
+                    <div class="row"
+                         th:with="bookitem=${borrowService.searchBookItemByBorrowID(__${penalty.getBorrowId()}__)}">
+                        <div class="input-field col s6">
+                            <input disabled id="outDate" type="date" class="datepicker"
+                                   th:value="${#dates.format(borrowInfo.outDate,'yyyy-MM-dd')}">
+                            <label for="outDate" th:text="借出日期">Disabled</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input disabled id="outUser" type="text" class="validate"
+                                   th:value="${userService.getUserByID(__${penalty.adminId}__).getUsername()}">
+                            <label for="outUser" th:text="借出借阅管理员">Disabled</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input th:if="${borrowInfo.backDate!=null}" disabled id="actbackDate"
+                                   type="date" class="datepicker"
+                                   th:value="${#dates.format(borrowInfo.backDate,'yyyy-MM-dd')}">
+                            <label for="actbackDate" th:text="应归还日期">Disabled</label>
+                        </div>
+
+                        <div class="input-field col s6">
+                            <input th:if="${borrowInfo.actualBackDate!=null}" disabled id="backDate"
+                                   type="date" class="datepicker"
+                                   th:value="${#dates.format(borrowInfo.actualBackDate,'yyyy-MM-dd')}">
+                            <input th:if="${borrowInfo.actualBackDate==null}" disabled id="backDate"
+                                   type="date" class="datepicker" th:placeholder="暂未归还">
+                            <label for="backDate" th:text="归还日期">Disabled</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input th:if="${borrowInfo.getBackuserId()!=null}" disabled id="BackUser"
+                                   type="text" class="validate"
+                                   th:value="${userService.getUserByID(__${borrowInfo.getBackuserId()}__).getUsername()}">
+                            <input th:if="${borrowInfo.getBackuserId()==null}" disabled id="BackUser"
+                                   type="text" class="validate" th:placeholder="暂未归还">
+                            <label for="BackUser" th:text="归还借阅管理员">Disabled</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input disabled id="location" type="text" class="validate"
+                                   th:value="${bookService.findBookItemByItemID(__${bookitem.bookitemId}__).getLocation()}">
+                            <label for="location" th:text="书册位置">Disabled</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <a class="btn waves-light waves-effect"
+                               th:href="@{/itemMod(lol=${bookitem.bookitemId})}">书册信息</a>
+                        </div>
+                        <!--<div class="input-field col s6" th:if="*{borrowRecord.status!='0'}">-->
+                        <!--<a class="btn waves-light waves-effect"-->
+                        <!--th:href="@{/borrowback(borrowRecord=${infoAndBorrow.borrowRecord.borrowId},-->
+                        <!--userID=${infoAndBorrow.borrowRecord.userId})}">借阅返还</a>-->
+                        <!--</div>-->
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+
+    </div>
+
+
+</main>
+</body>
+</html>

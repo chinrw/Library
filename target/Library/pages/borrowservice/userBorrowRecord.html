@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>用户借阅记录</title>
+    <th:block th:replace="template/usersearch :: head">
+    </th:block>
+    <link type="text/css" rel="stylesheet" href="../../resources/css/style.css" th:href="@{/resources/css/style.css}"
+          media="screen,projection"/>
+</head>
+<body>
+<header th:replace="template/frame :: frame"></header>
+<main>
+    <aside th:replace="template/frame :: aside"></aside>
+    <div th:replace="template/usersearch :: search"></div>
+    <div class="container">
+        <div class="card horizontal z-depth-3">
+            <div class="row">
+                <div class="card-image col s4">
+                    <img src="https://lorempixel.com/100/190/nature/6"
+                         th:src="@{/resources/images/__${borrowUser.icon}__}">
+                </div>
+                <div class="card-stacked">
+                    <div class="card-content">
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <input disabled id="regDate" type="date" class="datepicker"
+                                       th:placeholder="${#dates.format(borrowUser.regDate,'yyyy-MM-dd')}">
+                                <label for="regDate" th:text="注册日期">Disabled</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input disabled id="email" type="text" class="validate"
+                                       th:placeholder="${borrowUser.email}">
+                                <label for="email" th:text="邮箱">Disabled</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input disabled id="tel" type="text" class="validate"
+                                       th:placeholder="${borrowUser.tel}">
+                                <label for="tel" th:text="电话号码">Disabled</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-action" th:if="${session.currentUser!=null}">
+                        <a th:if="${session.roleList.contains('bookadmin')}"
+                           class="waves-effect wave-light btn right" type="submit"
+                           th:name="penalty" th:href="@{borrowback(user=${borrowUser.getUserId()})}">查看借阅记录
+                        </a>
+                        <a th:if="${session.roleList.contains('bookadmin')}"
+                           class="waves-effect wave-light btn right" type="submit"
+                           th:name="penalty" th:href="@{penalty(user=${borrowUser.getUserId()})}">查看罚单记录
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <ul class="collapsible z-depth-3" data-collapsible="accordion">
+            <li th:each="infoAndBorrow, iterstat:${loopHelper}" th:object="${infoAndBorrow}">
+                <th:block th:unless="*{borrowRecord.extDate != null}">
+                    <div class="collapsible-header">
+                        <img class="resizable avatar" src=""
+                             th:src="@{/resources/images/__${infoAndBorrow.bookInformation.cover}__}">
+
+                        <th:block th:text="${infoAndBorrow.bookInformation.title}">
+                        </th:block>
+                        <span th:if="*{borrowRecord.whetherExt == '1' and borrowRecord.status == '1'}"
+                              class="new badge yellow" data-badge-caption="已续借">
+                    </span>
+                        <th:block th:unless="${overdueList.contains(__${infoAndBorrow.borrowRecord.getBorrowId()}__)}">
+                    <span th:if="*{borrowRecord.status == '1'}" class="new badge blue" data-badge-caption="正在借阅">
+                    </span>
+                        </th:block>
+                        <span th:if="${overdueList.contains(__${infoAndBorrow.borrowRecord.getBorrowId()}__)}"
+                              class="new badge red" data-badge-caption="已逾期">
+                    </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <input disabled id="outDate" type="date" class="datepicker"
+                                       th:value="${#dates.format(infoAndBorrow.borrowRecord.outDate,'yyyy-MM-dd')}">
+                                <label for="outDate" th:text="借出日期">Disabled</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input disabled id="outUser" type="text" class="validate"
+                                       th:value="${userService.getUserByID(__${infoAndBorrow.borrowRecord.getOutuserId()}__).getUsername()}">
+                                <label for="outUser" th:text="借出借阅管理员">Disabled</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input th:if="${infoAndBorrow.borrowRecord.backDate!=null}" disabled id="actbackDate"
+                                       type="date" class="datepicker"
+                                       th:value="${#dates.format(infoAndBorrow.borrowRecord.backDate,'yyyy-MM-dd')}">
+                                <label for="actbackDate" th:text="应归还日期">Disabled</label>
+                            </div>
+
+                            <div class="input-field col s6">
+                                <input th:if="${infoAndBorrow.borrowRecord.actualBackDate!=null}" disabled id="backDate"
+                                       type="date" class="datepicker"
+                                       th:value="${#dates.format(infoAndBorrow.borrowRecord.actualBackDate,'yyyy-MM-dd')}">
+                                <input th:if="${infoAndBorrow.borrowRecord.actualBackDate==null}" disabled id="backDate"
+                                       type="date" class="datepicker" th:placeholder="暂未归还">
+                                <label for="backDate" th:text="归还日期">Disabled</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input th:if="${infoAndBorrow.borrowRecord.getBackuserId()!=null}" disabled
+                                       id="BackUser"
+                                       type="text" class="validate"
+                                       th:value="${userService.getUserByID(__${infoAndBorrow.borrowRecord.getBackuserId()}__).getUsername()}">
+                                <input th:if="${infoAndBorrow.borrowRecord.getBackuserId()==null}" disabled
+                                       id="BackUser"
+                                       type="text" class="validate" th:placeholder="暂未归还">
+                                <label for="BackUser" th:text="归还借阅管理员">Disabled</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input disabled id="location" type="text" class="validate"
+                                       th:value="${bookService.findBookItemByItemID(__${infoAndBorrow.borrowRecord.bookitemId}__).getLocation()}">
+                                <label for="location" th:text="书册位置">Disabled</label>
+                            </div>
+                            <div class="input-field col s3">
+                                <a class="btn waves-light waves-effect"
+                                   th:href="@{/itemMod(lol=${infoAndBorrow.borrowRecord.bookitemId})}">书册信息</a>
+                            </div>
+                            <div class="input-field col s3" th:if="*{borrowRecord.status!='0'}">
+                                <a class="btn waves-light waves-effect"
+                                   th:unless="${session.roleList.contains('reader')}"
+                                   th:href="@{/borrowExt(borrowRecord=${infoAndBorrow.borrowRecord.borrowId},
+                               userID=${infoAndBorrow.borrowRecord.userId})}">借阅延期</a>
+                            </div>
+
+                            <div class="input-field col s3" th:unless="${session.roleList.contains('reader')}">
+                                <a class="btn waves-light waves-effect"
+                                   th:href="@{/penaltyAdd(borrowRecord=${infoAndBorrow.borrowRecord.borrowId},
+                               user=${infoAndBorrow.borrowRecord.userId})}">罚单给予</a>
+                            </div>
+                            <div class="input-field col s3" th:if="*{borrowRecord.status!='0'}">
+                                <a class="btn waves-light waves-effect"
+                                   th:unless="${session.roleList.contains('reader')}"
+                                   th:href="@{/borrowback(borrowRecord=${infoAndBorrow.borrowRecord.borrowId},
+                               userID=${infoAndBorrow.borrowRecord.userId})}">借阅返还</a>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </li>
+
+        </ul>
+
+
+    </div>
+
+</main>
+</body>
+</html>

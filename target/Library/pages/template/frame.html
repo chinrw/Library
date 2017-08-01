@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+
+    <link type="text/css" rel="stylesheet" href="" th:href="@{/resources/css/style.css}"
+          media="screen,projection"/>
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!--Import jQuery before materialize.js-->
+
+</head>
+
+<body>
+
+
+<header id="header" th:fragment="frame">
+
+    <th:block th:if="${message!=null}">
+        <script th:inline="javascript">
+            var data = [[${message}]];
+            Materialize.toast(data, 4000, 'rounded');
+        </script>
+    </th:block>
+
+    <ul id="dropdown2" class="dropdown-content">
+        <li th:if="${session.currentUser==null}"><a href="#login" th:href="@{login}">登录</a></li>
+        <li th:if="${session.currentUser==null}"><a href="#register" th:href="@{signup}">注册</a></li>
+        <li th:if="${session.currentUser!=null}"><a href="/logout" th:href="@{/profile}">个人信息</a></li>
+        <li th:if="${session.currentUser!=null}"><a href="/logout" th:href="@{/logout}">注销</a></li>
+    </ul>
+    <div class="navbar-fixed">
+        <nav class="z-depth-4">
+            <div class="nav-wrapper">
+                <a id="nav-menu" href="#" data-activates="nav-mobile" class="button-collapse"><i
+                        class="material-icons">menu</i></a>
+                <ul class="left hide-on-med-and-down ">
+                    <li><a href="frame.html" th:href="@{/index}"><h4>图书馆管理系统</h4></a></li>
+                </ul>
+                <div class="header-search-wrapper">
+                    <form th:action="@{/index}" method="post">
+                        <i id="search-icon" class="material-icons">search</i>
+                        <input class="header-search-input z-depth-2" id="search-test" type="search" required
+                               placeholder="查找图书信息" th:name="search">
+                        <label class="label-icon" for="search-test"></label>
+                    </form>
+                </div>
+                <ul class="right">
+                </ul>
+
+            </div>
+        </nav>
+    </div>
+
+
+</header>
+<main>
+    <aside th:fragment="aside">
+        <ul class="side-nav fixed z-depth-4" id="nav-mobile" th:if="${session.currentUser == null}">
+            <li class="user-details blue-grey darken-2">
+                <div class="row">
+                    <div class="col s4 l4 m4">
+                        <img src="/pages/images/login.jpg" th:src="@{/resources/images/user_default.jpg}" alt=""
+                             class="circle responsive-img">
+                    </div>
+                    <div class="col s8 m8 l8">
+                        <a class="btn-flat dropdown-button waves-effect waves-light white-text profile-btn"
+                           data-beloworigin="true" href="#!"
+                           data-activates="dropdown2"> 未登录
+                            <i class="material-icons">arrow_drop_down</i>
+                        </a>
+
+
+                    </div>
+                </div>
+            </li>
+
+            <li class="divider"></li>
+        </ul>
+
+
+        <!--是否登录的分割线-->
+
+        <ul class="side-nav fixed z-depth-4" th:id="nav-mobile" th:if="${session.currentUser!=null}"
+            th:object="${session.currentUser}">
+            <li class="user-details blue-grey darken-2">
+                <div class="row">
+                    <div class="col s4 l4 m4">
+                        <img src="/pages/images/login.jpg"
+                             th:src="@{/resources/images/{path}(path = ${session.currentUser.icon})}"
+                             alt=""
+                             class="circle responsive-img">
+                    </div>
+                    <div class="col s8 m8 l8">
+                        <a class="btn-flat dropdown-button waves-effect waves-light white-text profile-btn"
+                           data-beloworigin="true" href="#!"
+                           data-activates="dropdown2" th:text="*{username}"> 未登录
+                            <i class="material-icons">arrow_drop_down</i>
+                        </a>
+
+                    </div>
+                </div>
+            </li>
+            <!--<li><a href="../search-results.html">个人信息设置</a></li>-->
+            <!--<li><a href="badges.html">消息管理</a></li>-->
+            <li class="no-pad" th:if="${session.roleList.contains('reader')}">
+                <ul class="collapsible" data-collapsible="accordion">
+                    <li class="bold active">
+                        <a class="collapsible-header waves-effect waves-teal">借阅记录查询</a>
+                        <div class="collapsible-body">
+                            <ul>
+                                <li class="sidenav-li">
+                                    <a href="#" th:href="@{borrowback(user=${session.currentUser.userId})}">借阅记录</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <li class="no-pad" th:if="${session.roleList.contains('bookadmin') or session.roleList.contains('admin')}">
+                <ul class="collapsible" data-collapsible="accordion">
+                    <li class="bold active">
+                        <a class="collapsible-header waves-effect waves-teal">罚单管理</a>
+                        <div class="collapsible-body">
+                            <ul>
+                                <li class="sidenav-li"><a href="/penalty">查询用户罚单</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="bold active" th:if="${session.roleList.contains('bookadmin')}">
+                        <a class="collapsible-header waves-effect waves-teal">书籍管理</a>
+                        <div class="collapsible-body">
+                            <ul>
+                                <li class="sidenav-li"><a href="/bookadd">添加书籍信息</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="bold active" th:if="${session.roleList.contains('admin')}">
+                        <a class="collapsible-header waves-effect waves-teal">用户管理</a>
+                        <div class="collapsible-body">
+                            <ul>
+                                <li class="sidenav-li"><a href="/rolemod">编辑用户权限</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="bold active" th:if="${session.roleList.contains('borrowadmin')}">
+                        <a class="collapsible-header waves-effect waves-teal">借阅管理</a>
+                        <div class="collapsible-body">
+                            <ul>
+                                <li class="sidenav-li"><a href="/borrowback">借阅查询</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+
+                </ul>
+            </li>
+
+            <li><a href="collapsible.html" th:if="${session.roleList.contains('reader')}"
+                   th:href="@{/penalty(user=${session.currentUser.userId})}">罚单查询</a></li>
+            <li class="divider"></li>
+        </ul>
+
+    </aside>
+    <div class="main-content"></div>
+
+    <div class="fixed-action-btn" th:fragment="action-btn">
+        <a id="menu" class="btn-floating btn-large red">
+            <i class="material-icons">menu</i>
+        </a>
+        <ul>
+            <li><a class="btn-floating red"><i class="material-icons">add_circle</i></a></li>
+            <li><a href="#search-test" class="btn-floating yellow darken-1"><i class="material-icons">search</i></a>
+            </li>
+            <li><a class="btn-floating green"><i class="material-icons">settings</i></a></li>
+            <li><a class="btn-floating blue" href="#modal1"><i class="material-icons">account_circle</i></a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <a id="help-click" class="waves-effect waves-light btn"><i
+                class="material-icons">menu</i></a>
+    </div>
+    <div class="tap-target cyan" data-activates="menu">
+        <div class="tap-target-content">
+            <h5>Title</h5>
+            <p>A bunch of text</p>
+        </div>
+    </div>
+
+</main>
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="../../resources/js/bin/materialize.min.js"
+        th:src="@{/resources/js/bin/materialize.min.js}"></script>
+
+<script type="text/javascript" src="../../resources/js/bin/Project.js"
+        th:src="@{/resources/js/bin/Project.js}"></script>
+</body>
+
+</html>
+        

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link type="text/css" rel="stylesheet" href="../../resources/css/style.css" th:href="@{/resources/css/style.css}"
+          media="screen,projection"/>
+    <!--Import jQuery before materialize.js-->
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="/pages/js/bin/materialize.min.js"
+            th:src="@{/resources/js/bin/materialize.min.js}"></script>
+    <script type="text/javascript" src="../../resources/js/bin/Project.js"
+            th:src="@{/resources/js/bin/Project.js}"></script>
+
+
+</head>
+<body>
+<header class="index" th:replace="template/frame :: frame"></header>
+<main>
+    <aside th:replace="template/frame :: aside"></aside>
+    <div class="container">
+        <div class="card">
+            <div class="card-content" id="signup">
+                <div class="row">
+                    <form action="#" class="col s12" method="post" th:action="@{/signup}" th:object="${user}">
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix">account_circle</i>
+                                <input id="reg_account" type="text" class="validate" required min="8" max="16"
+                                       th:field="*{username}">
+                                <label for="reg_account" data-error="wrong">账号</label>
+                            </div>
+\                            <div class="input-field col s6">
+                                <i class="material-icons prefix">security</i>
+                                <input id="reg_password" type="password" class="validate" required minlength="8"
+                                       maxlength="16" th:field="*{password}" >
+                                <label for="reg_password" data-error="wrong">密码</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <i class="material-icons prefix">security</i>
+                                <input id="repeat_password" type="password" class="validate" required minlength="8"
+                                       maxlength="16">
+                                <label for="repeat_password" data-error="wrong">确认密码</label>
+                            </div>
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix">email</i>
+                                <input id="email" type="email" class="validate" required th:field="*{email}">
+                                <label for="email" data-error="wrong">Email</label>
+                            </div>
+
+                        </div>
+                        <div class="card-action right-align">
+                            <button th:name="save" type="submit"
+                                    class="waves-effect waves-green btn">提交
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div th:replace="template/frame :: action-btn"></div>
+</main>
+
+</body>
+</html>

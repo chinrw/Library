@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:fragment="head">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link type="text/css" rel="stylesheet" href="../../resources/css/style.css" th:href="@{/resources/css/style.css}"
+          media="screen,projection"/>
+    <!--Import jQuery before materialize.js-->
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="/pages/js/bin/materialize.min.js"
+            th:src="@{/resources/js/bin/materialize.min.js}"></script>
+    <script type="text/javascript" src="../../resources/js/bin/Project.js"
+            th:src="@{/resources/js/bin/Project.js}"></script>
+    </th:block>
+</head>
+<body>
+<header th:replace="template/frame :: frame"></header>
+<main>
+    <aside th:replace="template/frame :: aside"></aside>
+
+    <div class="container" th:fragment="search">
+        <ul class="collection with-header z-depth-3" th:unless="${session.roleList.contains('reader')}" >
+            <li class="collection-header">
+                <div class="header-search-wrapper" style="width: calc(100% - 170px);">
+                    <form th:action="@{/__${actionUrl}__}" method="post">
+                        <i id="search-icon" class="material-icons">search</i>
+                        <input class="header-search-input z-depth-2" id="userSearch" type="search" required
+                               placeholder="查找指定用户" th:placeholder="${searchPlaceHolder}" th:name="search">
+                        <label class="label-icon" for="userSearch"></label>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+</main>
+</body>
+</html>

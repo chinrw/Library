@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>用户权限修改</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link type="text/css" rel="stylesheet" href="../../resources/css/style.css" th:href="@{/resources/css/style.css}"
+          media="screen,projection"/>
+    <!--Import jQuery before materialize.js-->
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="/pages/js/bin/materialize.min.js"
+            th:src="@{/resources/js/bin/materialize.min.js}"></script>
+    <script type="text/javascript" src="../../resources/js/bin/Project.js"
+            th:src="@{/resources/js/bin/Project.js}"></script>
+</head>
+<body>
+<header th:replace="template/frame :: frame"></header>
+<main>
+    <aside th:replace="template/frame :: aside"></aside>
+    <div class="container">
+        <ul class="collection with-header z-depth-3">
+            <li class="collection-header">
+                <div class="header-search-wrapper" style="width: calc(100% - 170px);">
+                    <form th:action="@{/rolemod}" method="post">
+                        <i id="search-icon" class="material-icons">search</i>
+                        <input class="header-search-input z-depth-2" id="userSearch" type="search" required
+                               placeholder="查找需要更改的用户信息" th:name="search">
+                        <label class="label-icon" for="userSearch"></label>
+                    </form>
+                </div>
+            </li>
+        </ul>
+        <th:block th:if="${userList != null}">
+            <form th:action="@{/rolemod}" method="post" th:object="${newRoles}">
+                <ul class="collapsible z-depth-3" data-collapsible="accordion">
+                    <li th:each="userRole, iterstat:${userRoleList}">
+                        <div class="collapsible-header">
+                            <img
+                                    class="resizable circle avatar" src=""
+                                    th:src="@{/resources/images/__${userRole.user.icon}__}">
+
+                            <th:block th:text="${userRole.user.username}">
+
+                            </th:block>
+                        </div>
+                        <div class="collapsible-body">
+                            <div class="row">
+                                <div class="input-field col s6">
+                                    <input disabled id="regDate" type="date" class="datepicker"
+                                           th:value="${#dates.format(userRole.user.regDate,'yyyy-MM-dd')}">
+                                    <label for="regDate" th:text="注册日期">Disabled</label>
+                                </div>
+                                <div class="input-field col s6">
+                                    <input disabled id="email" type="text" class="validate"
+                                           th:value="${userRole.user.email}">
+                                    <label for="email" th:text="邮箱">Disabled</label>
+                                </div>
+                                <div class="input-field col s6">
+                                    <input disabled id="tel" type="text" class="validate"
+                                           th:value="${userRole.user.tel}">
+                                    <label for="tel" th:text="电话号码">Disabled</label>
+                                </div>
+                                <div class="input-field col s6">
+                                    <select multiple id="role" th:field="*{roleLists}">
+                                        <option value="" disabled selected>选择权限</option>
+                                        <option value="1" th:each="role: ${roleStrings}"
+                                                th:value="${{role}}" th:text="${role}">Option 1
+                                        </option>
+                                    </select>
+                                    <label for="role" th:text="权限">Disabled</label>
+                                </div>
+                                <div class="card-action right">
+                                    <button th:value="${userRole.user.userId}" th:type="submit"
+                                            class="btn waves-light waves-effect" th:name="modify">
+                                        提交修改
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </form>
+        </th:block>
+    </div>
+</main>
+</body>
+</html>

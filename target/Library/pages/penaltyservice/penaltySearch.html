@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>罚单查询</title>
+    <th:block th:replace="template/usersearch :: head">
+    </th:block>
+    <link type="text/css" rel="stylesheet" href="../../resources/css/style.css" th:href="@{/resources/css/style.css}"
+          media="screen,projection"/>
+</head>
+<body>
+<header th:replace="template/frame :: frame"></header>
+<main>
+    <aside th:replace="template/frame :: aside"></aside>
+    <div th:replace="template/usersearch :: search"></div>
+
+    <div class="container z-depth-3">
+        <div class="collection" th:if="${userList != null or !#lists.isEmpty(userList)}">
+            <th:block th:each="user:${userList}">
+                <a href="" th:href="@{/penalty(user=${user.userId})}" class="collection-item" th:type="submit">
+                    <img class="resizable circle avatar" src="" th:src="@{/resources/images/__${user.icon}__}">
+                    <span th:text="${user.username}"></span>
+                </a>
+            </th:block>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>修改书册信息</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link type="text/css" rel="stylesheet" href="../../resources/css/style.css" th:href="@{/resources/css/style.css}"
+          media="screen,projection"/>
+    <!--Import jQuery before materialize.js-->
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="/pages/js/bin/materialize.min.js"
+            th:src="@{/resources/js/bin/materialize.min.js}"></script>
+    <script type="text/javascript" src="../../resources/js/bin/Project.js"
+            th:src="@{/resources/js/bin/Project.js}"></script>
+
+
+</head>
+<body>
+<header th:replace="template/frame :: frame"></header>
+<main>
+    <aside th:replace="template/frame :: aside"></aside>
+    <div class="container">
+        <form class="col s12 offset-m3 m6" method="post" th:action="@{/bookmod}" th:object="${book}">
+            <div class="card horizontal z-depth-3">
+                <div class="card-image">
+                    <img th:if="${book.cover!=''}" src="https://lorempixel.com/100/190/nature/6"
+                         th:src="@{/resources/images/__${book.cover}__}">
+                    <img th:if="${book.cover==''}" src="https://lorempixel.com/100/190/nature/6"
+                         th:src="@{/resources/images/book-default-cover.jpg}">
+                </div>
+                <div class="card-stacked">
+                    <div class="card-content">
+                        <div class="row">
+                            <h4 class="col s12" th:text="${book.title}">标题</h4>
+                            <h6 class="col s6" style="margin-bottom: 20px"
+                                th:text="${book.authors} + '著'">
+                                作者</h6>
+                            <div class="col s12" th:text="${book.content}">简介</div>
+                        </div>
+                    </div>
+
+                    <div class="card-action" th:if="${session.currentUser!=null}">
+                        <button th:if="${session.roleList.contains('bookadmin')}"
+                                class="waves-effect waves-green btn right" type="submit"
+                                th:name="modify"
+                                th:value="${book.bookId}">编辑书籍
+                        </button>
+                        <button th:if="${session.roleList.contains('bookadmin')}"
+                                class="waves-effect waves-light btn right"
+                                type="submit" th:name="itemMod" th:value="${book.bookId}">编辑书册
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+        </form>
+
+        <th:block th:if="${addTrue==null}">
+
+            <div th:if="${itemID!=null}">
+                <form class="col s12 offset-m3 m6" method="post" th:action="@{/itemMod}" th:object="${selectItem}">
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="input-field col s12">
+                                <input id="authors" type="text" class="validate" required
+                                       th:field="*{location}">
+                                <label for="authors" data-error="wrong" th:field="*{location}">存放地点</label>
+                            </div>
+                            <div class="input-field col s12">
+                                <input type="date" id="date" class="datepicker" required
+                                       th:field="*{inDate}">
+                                <label for="date" data-error="wrong">入馆日期</label>
+                            </div>
+                            <div class="input-field col s12">
+                                <select id="library" th:field="*{libraryId}">
+                                    <option value="" disabled selected>选择图书馆</option>
+                                    <option th:each="library : ${libraryRecords}" th:value="${library.library}"
+                                            th:text="${library.location}"></option>
+                                </select>
+                                <label for="library">图书馆</label>
+
+                            </div>
+
+
+                        </div>
+                        <div class="card-action" style="padding-bottom: 10%" th:if="${session.currentUser!=null}">
+                            <a type="submit" th:if="${session.roleList.contains('bookadmin')}"
+                               th:href="@{/itemMod(disable=${itemID})}"
+                               class="waves-effect waves-light btn left red"
+                               th:name="submit">书册失效
+                            </a>
+                            <button type="submit" th:if="${session.roleList.contains('bookadmin')}"
+                                    th:href="@{/itemMod(update=${itemID})}"
+                                    class="waves-effect waves-light btn right" th:value="${itemID}"
+                                    th:name="update">提交修改
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            <div style="padding-bottom: 200px;">
+                <ul class="collection with-header z-depth-3" th:if="${itemID == null}">
+                    <li class="collection-header">
+                        <form action="" th:action="@{/itemAdd}" th:object="${book}">
+                            <h4>书册信息
+                                <button th:if="${session.roleList!=null and session.roleList.contains('bookadmin')}"
+                                        class="right btn-floating waves-effect waves-light red"
+                                        th:name="Add" type="submit" th:value="${book.bookId}">
+                                    <i class="material-icons">add</i>
+                                </button>
+                            </h4>
+                        </form>
+                    </li>
+                    <th:block th:unless="${#lists.isEmpty(bookItem)}" th:each="item ,iterstats:${bookItem}">
+                        <li class="collection-item">
+                            <form action="/itemMod">
+                                <div>
+                                    <span th:text="${item.location}"></span>
+                                    <a type="submit"
+                                       th:href="@{/itemMod(lol=${item.bookitemId})}"
+                                       th:value="${item.bookitemId}"
+                                       class="secondary-content tooltipped" data-position="top" data-delay="50"
+                                       data-tooltip="书册信息">
+                                        <i class="material-icons">mode_edit</i></a>
+                                    <a th:if="${session.roleList!=null and session.roleList.contains('bookadmin')}"
+                                       type="submit"
+                                       th:href="@{/borrowAdd(borrow=${item.bookitemId})}"
+                                       th:value="${item.bookitemId}"
+                                       class="secondary-content tooltipped" data-position="top" data-delay="50"
+                                       data-tooltip="进行借阅申请">
+                                        <i class="material-icons">add_circle</i>
+                                    </a>
+                                    <span style="margin-right: 20px" class="new badge blue" data-badge-caption="书册已借出"
+                                          th:if="${item.status == '0'}"></span>
+                                    <span style="margin-right: 20px" class="new badge red" data-badge-caption="书册已注销"
+                                          th:if="${item.status == '2'}"></span>
+
+
+                                </div>
+                            </form>
+                        </li>
+                    </th:block>
+                </ul>
+
+            </div>
+        </th:block>
+
+        <th:block th:if="${addTrue!=null}">
+            <form class="col s12 offset-m3 m6" method="post" th:action="@{/itemAdd}" th:object="${bookItemAdd}">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="input-field col s12">
+                            <input id="authors2" type="text" class="validate" required
+                                   th:field="*{location}">
+                            <label for="authors2" data-error="wrong" th:field="*{location}">存放地点</label>
+                        </div>
+                        <div class="input-field col s12">
+                            <input type="date" id="date2" class="datepicker" required
+                                   th:field="*{inDate}">
+                            <label for="date2" data-error="wrong">入馆日期(默认为当天日期)</label>
+                        </div>
+                        <div class="input-field col s12">
+                            <select id="library2" th:field="*{libraryId}">
+                                <option value="" disabled selected>选择图书馆</option>
+                                <option th:each="library : ${libraryRecords}" th:value="${library.library}"
+                                        th:text="${library.location}"></option>
+                            </select>
+                            <label for="library2">图书馆</label>
+
+                        </div>
+
+
+                    </div>
+                    <div class="card-action" style="padding-bottom: 10%" th:if="${session.currentUser!=null}">
+                        <button type="submit" th:if="${session.roleList.contains('bookadmin')}"
+                                th:value="${book.bookId}"
+                                class="waves-effect waves-light btn right"
+                                th:name="submit">提交修改
+                        </button>
+
+                    </div>
+
+                </div>
+            </form>
+        </th:block>
+
+    </div>
+
+</main>
+</body>
+</html>

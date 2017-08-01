@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>登录</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link type="text/css" rel="stylesheet" href="../../resources/css/style.css"
+          th:href="@{/resources/css/signpages.css}"
+          media="screen,projection"/>
+    <!--Import jQuery before materialize.js-->
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="/pages/js/bin/materialize.min.js"
+            th:src="@{/resources/js/bin/materialize.min.js}"></script>
+    <script type="text/javascript" src="../../resources/js/bin/Project.js"
+            th:src="@{/resources/js/bin/Project.js}"></script>
+
+
+</head>
+<body>
+<header class="index" th:replace="template/frame :: frame"></header>
+<main>
+    <!--<aside th:replace="template/frame :: aside"></aside>-->
+    <div class="container">
+        <div class="row">
+            <div class="card z-depth-5 col s12 m6 offset-m3 center-align" style="margin-top: 10%;">
+                <div class="card-content" style="margin-top: 0;" id="login">
+                    <h5 class="large">登录</h5>
+                    <div class="row">
+                        <div class="col s12">
+                            <form class="col s12" method="post" th:object="${user}" th:action="@{/login}">
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <i class="material-icons prefix">account_circle</i>
+                                        <input id="icon_account" type="text" class="validate" autofocus
+                                               th:field="*{username}">
+                                        <label for="icon_account">账号</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <i class="material-icons prefix">security</i>
+                                        <input id="icon_password" type="password" class="validate"
+                                               th:field="*{password}">
+                                        <label for="icon_password">密码</label>
+                                    </div>
+                                </div>
+                                <div class="card-action right-align">
+                                    <button th:name="login" type="submit" class="waves-effect waves-green btn">登录
+                                    </button>
+                                    <a href="/signup" class="waves-effect waves-green btn" th:value="注册">注册</a>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div th:replace="template/frame :: action-btn"></div>
+</main>
+
+</body>
+</html>

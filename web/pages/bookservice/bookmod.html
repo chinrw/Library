@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>修改书籍信息</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link type="text/css" rel="stylesheet" href="../../resources/css/style.css" th:href="@{/resources/css/style.css}"
+          media="screen,projection"/>
+    <!--Import jQuery before materialize.js-->
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="/pages/js/bin/materialize.min.js"
+            th:src="@{/resources/js/bin/materialize.min.js}"></script>
+    <script type="text/javascript" src="../../resources/js/bin/Project.js"
+            th:src="@{/resources/js/bin/Project.js}"></script>
+</head>
+<body>
+<header th:replace="template/frame :: frame"></header>
+<main>
+    <aside th:replace="template/frame :: aside"></aside>
+    <div class="container">
+        <div class="row">
+            <div class="card z-depth-3">
+                <div class="card-content" style="padding: 10%">
+                    <div class="card-title">修改书籍信息</div>
+                    <div class="row">
+                        <form action="#" class="col s12" method="post" th:action="@{/bookmod}" th:object="${bookinfo}">
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <input id="title" type="text" class="validate" required
+                                           th:field="*{title}">
+                                    <label for="title" data-error="wrong">标题</label>
+                                </div>
+                                <div class="input-field col s12">
+                                    <input id="authors" type="text" class="validate" required
+                                           th:field="*{authors}">
+                                    <label for="authors" data-error="wrong" th:field="*{authors}">作者</label>
+                                </div>
+                                <div class="input-field col s12">
+                                    <input type="date" id="date" class="datepicker" required
+                                           th:field="*{publishDate}">
+                                    <label for="date" data-error="wrong"
+                                           th:text="*{#dates.format(publishDate,'yyyy-MM-dd')}">出版日期</label>
+                                </div>
+                                <div class="input-field col s12">
+                                    <input id="publisher" type="text" class="validate" required
+                                           maxlength="100" th:field="*{publish}">
+                                    <label for="publisher" data-error="wrong" th:field="*{publish}">出版社</label>
+                                </div>
+                                <div class="input-field col s3">
+                                    <input id="pages" type="number" class="validate" required th:field="*{pages}">
+                                    <label for="pages" data-error="wrong" th:field="*{pages}">页码数</label>
+                                </div>
+                                <div class="input-field col s9">
+                                    <input id="isbn" type="text" class="validate" required th:field="*{isbn}">
+                                    <label for="isbn" data-error="wrong" th:field="*{isbn}">isbn编号</label>
+                                </div>
+                                <div class="input-field col s6">
+                                    <input id="version" type="text" class="validate" th:field="*{version}">
+                                    <label for="version" data-error="wrong" th:field="*{version}">版本</label>
+                                </div>
+                                <div class="input-field col s6">
+                                    <input id="price" type="text" class="validate" th:field="*{price}">
+                                    <label for="price" data-error="wrong" th:field="*{price}">价格</label>
+                                </div>
+                                <div class="input-field col s12">
+                                    <label for="content" data-error="wrong" th:field="*{content}">内容简介</label>
+                                    <textarea id="content" class="materialize-textarea" data-length="200"
+                                              th:field="*{content}"></textarea>
+                                </div>
+                                <div class="input-field col s12">
+                                    <label for="sum_authors" data-error="wrong">作者简介</label>
+                                    <textarea id="sum_authors" class="materialize-textarea" data-length="200"
+                                              th:field="*{sumAuthors}"></textarea>
+                                </div>
+                                <div class="col s12">
+                                    <p>
+                                        <label for="filled-in-box">光盘</label>
+                                        <input type="checkbox" class="filled-in" id="filled-in-box"/>
+                                    </p>
+                                </div>
+                                <div class="file-field input-field col s12">
+                                    <div class="btn">
+                                        <span>File</span>
+                                        <input type="file">
+                                    </div>
+                                    <div class="file-path-wrapper">
+                                        <input id="cover" class="file-path validate" type="text" th:field="*{cover}">
+                                        <label for="cover" data-error="wrong"></label>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="card-action right-align" th:if="${session.currentUser!=null}">
+                                <button th:name="submitModify" th:if="${session.roleList.contains('bookadmin')}"
+                                        type="submit" class="waves-effect waves-green btn">提交
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
